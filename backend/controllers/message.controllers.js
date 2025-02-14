@@ -32,7 +32,7 @@ export const sendMessage = async (req, res) => {
     // await conversation.save();
 
     //we will write it like this so that it'll run parallelly and take only 1 unit of time
-    await Promise.all([conversation.save(), message.save()]);
+    await Promise.all([conversation.save(), newMessage.save()]);
 
     //TODO: WE WILL WRITE SOCKET.IO FUNCTIONALITY HERE
 
@@ -47,6 +47,24 @@ export const sendMessage = async (req, res) => {
   }
 };
 
-export const receiveMessage = async (req, res) => {
-  console.log("receiveMessage route");
+export const getMessages = async (req, res) => {
+  try {
+    const { id: userToChatId } = req.params;
+    const senderId = req.user._id;
+
+    const conversation = await Conversation.findOne({
+      participants: { $all: [senderId, userToChatId] },
+    }).populate("messages"); // Replaces ObjectId references in "messages" with actual Message documents
+
+    if (!conversation) return res.status(200).json([]);
+
+    const messages = conversation.messages;
+
+    res.status(200).json(messages);
+  } catch (error) {
+    console.log("error while get messages in message controller: ", error);
+    res.status(500).json({
+      error: "error while get messages controller",
+    });
+  }
 };
