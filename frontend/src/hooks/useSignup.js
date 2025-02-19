@@ -1,10 +1,12 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useAuthContext } from "../context/AuthContext";
 
-const backendUri = "https://cg6gxs-5000.csb.app";
+const backendUri = import.meta.env.VITE_BACKEND_URI;
 
 const useSignup = () => {
   const [loading, setLoading] = useState(false);
+  const { setAuthUser } = useAuthContext();
 
   const signup = async ({
     fullName,
@@ -43,7 +45,9 @@ const useSignup = () => {
         throw new Error(data.Error);
       }
 
-      console.log(data);
+      //localstorage
+      localStorage.setItem("chat-user", JSON.stringify(data));
+      setAuthUser(data);
     } catch (error) {
       toast.error(error.message);
     } finally {
