@@ -17,7 +17,7 @@ import connectDB from "./database/connectDB.js";
 const app = express();
 
 //no need for uploading on vercel
-// const port = process.env.PORT;
+const port = process.env.PORT || 3001;
 
 //middlewares
 //express middlewares
@@ -46,5 +46,6 @@ app.get("/", (req, res) => {
 });
 
 connectDB();
+app.listen(port, () => console.log(`Server running on port ${port}`));
 
 export default app;
