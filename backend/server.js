@@ -15,14 +15,16 @@ import connectDB from "./database/connectDB.js";
 
 //main variables
 const app = express();
-const port = process.env.PORT;
+
+//no need for uploading on vercel
+// const port = process.env.PORT;
 
 //middlewares
 //express middlewares
 
 app.use(
   cors({
-    origin: "https://cg6gxs-3000.csb.app", // Allow only your frontend domain
+    origin: process.env.FRONTEND_ORIGIN, // Allow only your frontend domain
     methods: "GET, POST, PUT, DELETE, OPTIONS",
     credentials: true, // Allow cookies if needed
   })
@@ -43,8 +45,6 @@ app.get("/", (req, res) => {
   );
 });
 
-//starting point
-app.listen(port, () => {
-  connectDB();
-  console.log(`Example app listening on port ${port}`);
-});
+connectDB();
+
+export default app;
