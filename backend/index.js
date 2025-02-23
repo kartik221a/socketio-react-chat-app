@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
+import serverless from "serverless-http";
 
 // Load environment variables
 dotenv.config();
@@ -19,13 +20,13 @@ const app = express();
 // Middlewares
 app.use(
   cors({
-    origin: process.env.FRONTEND_ORIGIN, // Allow only your frontend domain
+    origin: process.env.FRONTEND_ORIGIN,
     methods: "GET, POST, PUT, DELETE, OPTIONS",
-    credentials: true, // Allow cookies if needed
+    credentials: true,
   })
 );
 app.use(cookieParser());
-app.use(express.json()); // To parse the incoming requests with JSON payloads
+app.use(express.json());
 app.options("*", cors());
 
 // API Routes
@@ -43,11 +44,11 @@ app.get("/", (req, res) => {
 // Connect Database
 connectDB();
 
-// Export for Vercel
-export default app;
+// Serverless function handler
+export const handler = serverless(app);
 
-// Vercel needs this for serverless functions
-if (process.env.NODE_ENV !== "vercel") {
+// Local development server
+if (process.env.NODE_ENV === "development") {
   const port = process.env.PORT || 3001;
-  app.listen(port, () => console.log(`Server running on port ${port}`));
+  app.listen(port, () => console.log(`Local server running on port ${port}`));
 }
